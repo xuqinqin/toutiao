@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+    <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>前后台交互</title>
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" type="text/css" href="/styles/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/styles/font-awesome.min.css">
+    <link rel="stylesheet" media="all" href="/styles/style.css">
+        <link rel="stylesheet" media="all" href="/styles/login.css">
+    <script src="/scripts/hm.js"></script>
+    <script src="/scripts/detail.js"></script>
+    <script type="text/javascript" src="/scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/scripts/jquery.qrcode.min.js"></script>
+        <script type="text/javascript" src="/scripts/webpage.js"></script>
+</head>
+<body class="welcome_index">
+    <header class="navbar navbar-default navbar-static-top bs-docs-nav" id="top" role="banner">
+        <div class="container">
+            <div class="navbar-header">
+                <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a href="" class="navbar-brand logo">
+                  <h1>头条资讯</h1>
+                  <h3>你关心的才是头条</h3>
+                </a>
+            </div>
+            <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class=""><a href="">发现</a></li>
+                    <li><a href="/qinqin">我也要发资讯</a></li>
+                    #if($user)
+                    <li class="">
+                        <a class=" theme-login" href="/changemsg">$!{user.name}</a>
+                    </li>
+                    #else
+                    <li class="">
+                        <a class=" theme-login" href="javascript:;">登陆</a>
+                    </li>
+                    #end
+                    <li class="">
+                        <a class=" " href="/logout" name="/logout">退出</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="theme-popover">
+            <div class="theme-poptit">
+                <a href="javascript:;" title="关闭" class="close">×</a>
+                <h3>登录 是一种态度</h3>
+            </div>
+            <div class="theme-popbod dform">
+                <form class="theme-signin" name="loginform" action="" method="post">
+                    <ol>
+                        <li><h4>你必须先登录！</h4></li>
+                        <li><strong>用户名：</strong><input class="ipt" type="text" name="username"  size="20" onblur="check_username()"/>
+                       </li>
+                        <li><strong>密码：</strong><input class="ipt" type="password" name="password"  size="20" /></li>
+                        <li><input class="btn btn-primary" type="submit" name="submit" value=" 登 录 " onclick="LOG()"/></li>
+                        <li><input class="btn btn-primary reg"  type="submit" name="submit" value=" 注册 " onclick="REG()"/></li>
+                    </ol>
+                </form>
+            </div>
+        </div>
+        <div class="theme-popover-mask"></div>
+    </header>
+
+    <div id="main">
+        <div class="container" id="daily">
+            <div class="jscroll-inner">
+                #set($cur_date='')
+                #foreach($v in $vos)
+                #if($cur_date!=$!{date.format('yyyy-MM-dd',$!{v.news.createdDate})})<!-这里的date是toolbox.xml下配置的-->
+                    #if($foreach.index>0)
+                        </div><!--在建立了一个分栏后，每一次准备建下一个分栏前，添加一个结束的div-->
+                    #end
+                    #set($cur_date=$!{date.format('yyyy-MM-dd',$!{v.news.createdDate})})
+            <div class="daily">
+                    <h3 class="date">
+                        <i class="fa icon-calendar"></i>
+                        <span>头条资讯</span>
+                        <small>$!{date.format('yyyy-MM-dd',$!{v.news.createdDate})}</small>
+                    </h3>
+                    #end<!--这里的end是判断上一次获取的时间和当前时间是否相等的i语句的-->
+                    <div class="posts">
+                        <div class="post">
+                            <div class="votebar">
+                               <a href="/news/up/$!{v.news.id}"> <button class="click-like up" aria-pressed="false" title="赞同"><i class="vote-arrow"></i><span class="count">$!{v.news.likeCount}</span></button>
+                                <a href="/news/dowm/$!{v.news.id}"><button class="click-dislike down" aria-pressed="true" title="反对"><i class="vote-arrow"></i></a>
+                                </button>
+                            </div>
+                            <div class="content" data-url="$!{v.news.link}">
+                                <div class="content-img">
+                                    <!--<img src="$!{v.news.image}" alt="">-->
+                                   <img src="/images/$!{v.news.image}">
+                                    <!--<img src="f:/upload/7ee237a25c394feaa2ba85acb5604605.jpg">-->
+                                </div>
+                                <div class="content-main">
+                                    <h3 class="title">
+                                        <a target="_blank" rel="external nofollow" href="$!{v.news.link}">$!{v.news.title} $!{date.format('yyyy-MM-dd',$!{v.news.createdDate})}</a>
+                                    </h3>
+                                    <div class="meta">
+                                        $!{v.news.link}
+                                        <span>
+                                            <i class="fa icon-comment"></i> $!{v.news.commentCount}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="user-info">
+                                <div class="user-avatar">
+                                    <a href="/user/$!{v.user.id}"><img width="32" class="img-circle" src="$!{v.user.headUrl}"></a>
+                                </div>
+
+                                <div class="info">
+                                    <h5>分享者</h5>
+                                    <a href=""><img width="48" class="img-circle" src="$!{v.user.headUrl}" alt="Thumb"></a>
+                                    <h4 class="m-b-xs">$!{v.user.name}</h4>
+                                    <a class="btn btn-default btn-xs" href=""><i class="fa icon-eye"></i> 关注TA</a>
+                                </div>
+                            </div>
+                            <div class="subject-name">来自 <a href="/user/$!{v.user.id}">$!{v.user.name}</a></div>
+                        </div>
+                    </div>
+                #if($foreach.count==$vos.size())
+                </div><!--在不管最后分栏与否，都要给最后加一个结束的div-->
+                #end
+                #end<!--这里的end语句对齐上面的foreach语句-->
+
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p class="text-center">
+                <a href="">关于我们</a>
+                <a href="">头条客户端</a>
+            </p>
+            <p class="text-center">© 2013-2017 头条八卦</p>
+        </div>
+
+    </footer>
+</body>
+</html>
